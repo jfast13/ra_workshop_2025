@@ -13,15 +13,18 @@ cpi_base <- c_cpi_u_extended_annual %>%
 
 # Create annual real wages and output to csv
 real_avg_annual_wages <- org_data %>% 
-  filter(age>16, selfemp==0, selfinc==0, !is.na(wage)) %>% # standard restrictions
+  
+  filter(age>=16, selfemp==0, !is.na(wage)) %>% # standard restrictions
   left_join(c_cpi_u_extended_annual, by = "year") %>% # join cpi data 
   mutate(realwage = wage * (cpi_base/c_cpi_u_extended)) %>% # inflation adjust all wages
+  
   group_by(year) %>% 
   summarise(
     real_avg_wages = weighted_mean(realwage, orgwgt, na.rm = TRUE)
     )
   
-  write_csv(real_avg_annual_wages, "./output/real_avg_wages.csv") # write to csv 
+# Write to csv 
+write_csv(real_avg_annual_wages, "./output/real_avg_wages.csv") 
 
 
   
